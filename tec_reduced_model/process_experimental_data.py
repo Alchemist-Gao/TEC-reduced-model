@@ -6,9 +6,13 @@ import numpy as np
 import pandas as pd
 import os
 
+'''
+将数据中缺失的行列清理，同时替换某些列名（不重要）
+'''
 
 def clean_dataset(dataset):
     new_dataset = dataset.dropna(axis=1, how="all")
+    # axis=1表示删除包含缺失值的列，how="all"表示如果所有值是NAN就删除该行/列
     replace_dict = {
         "Step Time": "Step Time [s]",
         "Prog Time": "Time [s]",
@@ -45,6 +49,9 @@ def clean_dataset(dataset):
 
     return new_dataset
 
+'''
+根据放电的Crate导入相应的数据，同时进行清洗，返回dict{ str : Pandas.DataFrame}
+'''
 
 def import_thermal_data(Crate, T):
     if Crate == 0.1:
@@ -80,6 +87,9 @@ def import_thermal_data(Crate, T):
 
     return datasets
 
+'''
+判断何时开始和结束放电（通过电流的前后变化，可能主要靠经验判断变化率）
+'''
 
 def get_idxs(dataset, I_dch, I_ch):
     i = dataset["Current [A]"]

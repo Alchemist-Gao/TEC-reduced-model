@@ -6,6 +6,12 @@ import pybamm
 import numpy as np
 import matplotlib.pyplot as plt
 from os import path
+import os
+import sys
+sys.path.append("..")
+sys.path.extend([os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
+
+from tec_reduced_model.set_parameters import set_thermal_parameters
 from tec_reduced_model.set_parameters import (
     set_thermal_parameters,
     set_experiment_parameters,
@@ -266,6 +272,7 @@ def compare_data(models, param, Crates, temperature, cells_ignore=None, filename
 
 
 # Define models
+models=[
     pybamm.lithium_ion.SPMe(
         options={
             "thermal": "lumped",

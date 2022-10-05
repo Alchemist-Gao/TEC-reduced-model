@@ -3,6 +3,10 @@
 #
 
 import pybamm
+import sys
+import os
+sys.path.append("..")
+sys.path.extend([os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
 from tec_reduced_model.set_parameters import set_thermal_parameters
 
 pybamm.set_logging_level("INFO")
@@ -50,7 +54,7 @@ for factor in mesh_factors:
     )
     sim.model.name
     sim.solve([0, 3600])
-    sim.solution.model.name += " x{} mesh".format(factor)
+    sim.solution.all_models[0].name += " x{} mesh".format(factor)
     solutions.append(sim.solution)
-
+    
 pybamm.dynamic_plot(solutions)

@@ -6,7 +6,9 @@ import pybamm
 import numpy as np
 from tec_reduced_model.process_experimental_data import import_thermal_data, get_idxs
 
-
+'''
+根据设定的值和默认值之间的倍数关系，调整某些参数的值
+'''
 def set_thermal_parameters(param, h, cp, T):
     cp_factor = cp / param.evaluate(pybamm.ThermalParameters().rho_eff_dim(T))
     h_factor = h / param.evaluate(pybamm.ThermalParameters().h_total_dim)
@@ -20,7 +22,9 @@ def set_thermal_parameters(param, h, cp, T):
 
     return param
 
-
+'''
+有效扩散系数和粒子浓度受温度影响很大，需要根据经验进行调整
+'''
 def set_experiment_parameters(param, Crate, T):
     if T == 25:
         cp0 = 17150
@@ -52,7 +56,9 @@ def set_experiment_parameters(param, Crate, T):
 
     return param
 
-
+'''
+根据当前温度调整参数
+'''
 def set_ambient_temperature(param, Crate, T):
     dataset = import_thermal_data(Crate, T)
     T_end = []

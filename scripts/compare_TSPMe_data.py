@@ -6,6 +6,10 @@ import pybamm
 import numpy as np
 import matplotlib.pyplot as plt
 from os import path
+import os
+import sys
+sys.path.append("..")
+sys.path.extend([os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
 from tec_reduced_model.set_parameters import (
     set_thermal_parameters,
     set_experiment_parameters,
@@ -78,7 +82,9 @@ def print_error(error, Crate, temperature, filename=None):
         with open(filename, "a") as f:
             f.write(error_str)
 
-
+'''
+传入相应的实验条件，画出相应的实验数据图，返回axes
+'''
 def plot_experimental_data(axes, Crate, temperature, cells_ignore):
     dataset = import_thermal_data(Crate, temperature)
     data_conc = {"time": [], "voltage": [], "temperature": []}
@@ -134,9 +140,12 @@ def plot_experimental_data(axes, Crate, temperature, cells_ignore):
 
     return axes, data_conc
 
-
+'''
+传入solution，根据具体需要的数据画图，返回axes
+源代码的solution.model.name是会报错的，pybamm已经将solution的model属性换成all_models(list)
+'''
 def plot_model_solutions(axes, solution, Crate, temperature):
-    if solution.model.name == "TSPMe":
+    if solution.all_models[0].name == "TSPMe":
         ls = "-"
         color = "black"
         linewidth = 0.75
@@ -149,12 +158,12 @@ def plot_model_solutions(axes, solution, Crate, temperature):
         solution["Time [s]"].entries,
         solution["Terminal voltage [V]"].entries,
         color=color,
-        label=solution.model.name,
+        label=solution.all_models[0].name,
         ls=ls,
         linewidth=linewidth,
     )
 
-    if solution.model.name == "TSPMe":
+    if solution.all_models[0].name == "TSPMe":
         axes[0].scatter(
             0,
             solution["X-averaged battery open circuit voltage [V]"].entries[0],
@@ -171,7 +180,7 @@ def plot_model_solutions(axes, solution, Crate, temperature):
         solution["Time [s]"].entries,
         solution["X-averaged cell temperature [K]"].entries - 273.15,
         color=color,
-        label=solution.model.name,
+        label=solution.all_models[0].name,
         ls=ls,
         linewidth=linewidth,
     )
@@ -211,7 +220,7 @@ def compare_data(models, param, Crates, temperature, cells_ignore=None, filename
             simulation = pybamm.Simulation(
                 model,
                 parameter_values=param,
-                experiment=experiment,
+                experiment=experiment
             )
             simulation.solve()
             solution = simulation.solution
@@ -238,7 +247,9 @@ models = [
             "thermal": "lumped",
             "dimensionality": 0,
             "cell geometry": "arbitrary",
-            "electrolyte conductivity": "integrated",
+            # electrolyte conductivity设置为integrated会报错
+            # “electrolyte conductivity” can be “default” (default), “full”, “leading order”, “composite” or “integrated”.
+            "electrolyte conductivity": "composite",
         },
         name="TSPMe",
     ),
