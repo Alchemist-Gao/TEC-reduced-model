@@ -178,7 +178,7 @@ def plot_experimental_data(axes, Crate, temperature, cells_ignore):
 
 
 def plot_model_solutions(axes, solution, Crate, temperature):
-    if solution.model.name == "TSPMe":
+    if solution.all_models[0].name == "TSPMe":
         ls = "-"
         color = "black"
         linewidth = 0.75
@@ -191,12 +191,12 @@ def plot_model_solutions(axes, solution, Crate, temperature):
         solution["Time [s]"].entries,
         solution["Terminal voltage [V]"].entries,
         color=color,
-        label=solution.model.name,
+        label=solution.all_models[0].name,
         ls=ls,
         linewidth=linewidth,
     )
 
-    if solution.model.name == "TSPMe":
+    if solution.all_models[0].name == "TSPMe":
         axes[0].scatter(
             0,
             solution["X-averaged battery open circuit voltage [V]"].entries[0],
@@ -213,7 +213,7 @@ def plot_model_solutions(axes, solution, Crate, temperature):
         solution["Time [s]"].entries,
         solution["X-averaged cell temperature [K]"].entries - 273.15,
         color=color,
-        label=solution.model.name,
+        label=solution.all_models[0].name,
         ls=ls,
         linewidth=linewidth,
     )
@@ -278,7 +278,7 @@ models=[
             "thermal": "lumped",
             "dimensionality": 0,
             "cell geometry": "arbitrary",
-            "electrolyte conductivity": "integrated",
+            "electrolyte conductivity": "composite",
         },
         name="TSPMe",
     ),
